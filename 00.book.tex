@@ -138,6 +138,45 @@ Secara rinci akan dijelaskan sebagai berikut :
 
 \subsubsection{Skenario \textit{Inquiry} Yang Sukses}
 
+  Pada saat \textit{client} melakukan \textit{request inquiry} data ke \textit{server}, jika memang data tersebut ada pada basis data dan komunikasi berjalan sebagaimana mestinya, maka \textit{server} akan memberikan respon sebagai berikut :
+  
+  \begin{lstlisting}
+{
+  "code": 01,
+  "message":"Data ditemukan",
+  "sppt": {
+    "nop":{nop},
+    "thn":{thn},
+    "nama":{nama wp},
+    "alamatOp":{alamat op},
+    "pokok":{pokok},
+    "denda":{denda}
+  }
+}
+  \end{lstlisting}
+  
+  Dengan keterangan sebagai berikut :
+  
+  \begin{itemize}
+    \item \texttt{"code"}, berisi kode status respon dari \textit{server} yang menggambarkan suatu kondisi, jika kondisi \textit{inquiry} selesai di proses tanpa ada masalah, maka akan bernilai \texttt{01}.
+    
+    \item \texttt{"message"}, berisi pesan informasi dari kondisi respon \textit{server} yang telah terjadi, untuk menjelaskan kode status yang tertera pada bagian \texttt{"code"}.
+    
+    \item \texttt{"sppt"}, berisi informasi \textit{inquiry} yang di\textit{request} oleh \textit{client}.
+    
+    \item \texttt{\{nop\}}, nantinya akan terisi oleh Nomor Objek Pajak PBB-P2 yang di\textit{request} oleh \textit{client}.
+    
+    \item \texttt{\{thn\}}, nantinya akan terisi oleh tahun pajak untuk nomor objek pajak yang di\textit{request} oleh \textit{client}.
+    
+    \item \texttt{\{nama wp\}}, nantinya akan terisi oleh nama wajib pajak untuk nomor objek pajak dan tahun pajak yang diminta oleh \textit{client}.
+    
+    \item \texttt{\{alamat op\}}, nantinya akan terisi oleh alamat objek pajak untuk nomor objek pajak dan tahun pajak yang diminta oleh \textit{client}.
+    
+    \item \texttt{\{pokok\}}, nantinya akan terisi oleh besarnya pokok pajak terhutang.
+    
+    \item \texttt{\{denda\}}, nantinya akan terisi oleh besarnya denda administrasi yang harus 
+  \end{itemize}
+
 \subsubsection{Skenario \textit{Inquiry} Yang Gagal Karena Tahun Pajak Bukan Angka}
 
 \subsubsection{Skenario \textit{Inquiry} Yang Gagal Karena Data Tidak Ditemukan}
