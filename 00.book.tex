@@ -174,10 +174,28 @@ Secara rinci akan dijelaskan sebagai berikut :
     
     \item \texttt{\{pokok\}}, nantinya akan terisi oleh besarnya pokok pajak terhutang.
     
-    \item \texttt{\{denda\}}, nantinya akan terisi oleh besarnya denda administrasi yang harus 
+    \item \texttt{\{denda\}}, nantinya akan terisi oleh besarnya denda administrasi yang harus dibayarkan oleh wajib pajak. Bila tanggal jatuh tempo belum terlewati, maka akan bernilai 0 (nol), namun apabila tanggal \textit{request} terjadi setelah tanggal jatuh tempo, maka nilainya akan muncul.
   \end{itemize}
 
 \subsubsection{Skenario \textit{Inquiry} Yang Gagal Karena Tahun Pajak Bukan Angka}
+
+  Bila ternyata karena kesalahan \textit{entry} data, tiba-tiba ada karakter bukan angka terselip pada parameter \texttt{tahun} pada saat \textit{request inquiry} data, maka \textit{server} akan menghasilkan respon berikut :
+
+  \begin{lstlisting}
+{
+  "code":36,
+  "message: "Tahun Pajak Mengandung Karakter bukan Angka",
+  "sppt":null
+}
+  \end{lstlisting}
+
+  Keterangan dari kode di atas adalah sebagai berikut :
+
+  \begin{itemize}
+    \item \texttt{\"code\"}, ini berisi kode pesan respon yang dihasilkan \textit{server} setelah menerima \textit{request} dari \textit{client}.
+    
+    \item 
+  \end{itemize}
 
 \subsubsection{Skenario \textit{Inquiry} Yang Gagal Karena Data Tidak Ditemukan}
 
