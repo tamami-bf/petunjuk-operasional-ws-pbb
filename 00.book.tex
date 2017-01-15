@@ -192,16 +192,160 @@ Secara rinci akan dijelaskan sebagai berikut :
   Keterangan dari kode di atas adalah sebagai berikut :
 
   \begin{itemize}
-    \item \texttt{\"code\"}, ini berisi kode pesan respon yang dihasilkan \textit{server} setelah menerima \textit{request} dari \textit{client}.
+    \item \texttt{\"code\"}, ini berisi kode pesan respon yang dihasilkan \textit{server} setelah menerima \textit{request} dari \textit{client}. Kode ini akan menyimbolkan sesuatu yang terjadi di \textit{server} untuk kemudian dikembalikan sebagai respon ke \textit{client}.
     
-    \item 
+    \item \texttt{\"message\"}, berisi keterangan untuk menjelaskan mengenai kode yang dihasilkan pada bagian \texttt{\"code\"}. Pada bagian ini dijelaskan bahwa ternyata \textit{client} telah mengirimkan parameter tahun pajak yang mengandung karakter bukan angka. Sebagai contoh, misalkan bahwa \textit{client} ternyata mengirimkan parameter tahun pajak dengan nilai \texttt{2p16}, sehingga \textit{server} akan mengirimkan respon seperti diatas.
+    
+    \item \texttt{\"sppt\"}, akan berisi \texttt{null} yang boleh diartikan kosong, karena data \textit{inquiry} yang diminta oleh \textit{client} memiliki kesalahan sehingga datanya tidak dapat diproses.
   \end{itemize}
 
 \subsubsection{Skenario \textit{Inquiry} Yang Gagal Karena Data Tidak Ditemukan}
 
+  Pada skenario ini, \textit{client} dengan benar memberikan parameter Nomor Objek Pajak dan tahun pajak yang diinginkan tanpa ada kesalahan pengetikan, namun ternyata setelah data dicari dalam basis data dengan menggunakan parameter yang disediakan, data tersebut tidak ada dalam basis data, sehingga respon yang dihasilkan \textit{server} akan terlihat sebagai berikut :
+  
+  \begin{lstlisting}
+{
+  "code":10,
+  "message":"Data Tidak Ditemukan",
+  "sppt":null
+}
+  \end{lstlisting}
+  
+  \begin{itemize}
+    \item \texttt{\"code\"}, bagian ini akan berisi kode pesan yang dihasilkan \textit{server} sebagai respon terhadap \textit{request} dari \textit{client}. Kode yang dihasilkan untuk skenario ini adalah \texttt{10}.
+    
+    \item \texttt{\"message\"}, bagian ini akan berisi deskripsi atau penjelasan dari kode yang dihasilkan pada bagian \texttt{\"code\"}. Untuk skenario ini, pesan yang dihasilkan adalah \texttt{\"Data Tidak Ditemukan\"} karena memang data yang diminta oleh \textit{client} tidak ada pada basis data.
+    
+    \item \texttt{\"sppt\"}, karena proses \textit{inquiry} tidak berhasil dengan data yang tidak ditemukan dalam basis data, maka isi dari parameter \texttt{\"sppt\"} ini pun akan bernilai \texttt{null} yang artinya kosong.
+  \end{itemize}
+
 \subsubsection{Skenario \textit{Inquiry} Yang Gagal Karena Kesalahan Server}
 
+  Pada skenario kali ini, \textit{client} dengan benar mengirimkan parameter \textit{request} ke \textit{server}, namun kegagal terjadi pada saat \textit{server} aplikasi akan mengambil data pada sistem basis data. Respon yang dihasilkan oleh \textit{server} untuk kondisi seperti ini adalah sebagai berikut :
+  
+  \begin{lstlisting}
+{
+  "code":04,
+  "message":"Kesalahan DB",
+  "sppt":null
+}
+  \end{lstlisting}
+  
+  Penjelasan untuk kode di atas adalah sebagai berikut :
+  
+  \begin{itemize}
+    \item \texttt{\"code\"}, bagian ini akan berisi status kode respon yang diberikan oleh \textit{server} pada \textit{client}, karena terjadi kesalahan komunikasi antara \textit{server} aplikasi dengan \textit{server} basis data, sehingga kode yang dihasilkan adalah kode \texttt{04}.
+    
+    \item \texttt{\"message\"}, bagian ini akan berisi penjelasan dari kode yang diberikan diatas, informasi yang diberikan yaitu \textit{\"Kesalahan DB\"}, yang dimaksud adalah adanya kesalahan yang terjadi antara \textit{server} aplikasi yang melakukan \textit{request} data ke \textit{server} basis data.
+    
+    \item \texttt{\"sppt\"}, tentunya parameter ini akan bernilai \texttt{null} karena tidak ada data PBB-P2 yang bisa dikirimkan ke \textit{client}.
+  \end{itemize}
+
 \subsection{Pencatatan Pembayaran}
+
+  Untuk pencatatan pembayaran, format \textit{request} yang dapat dikirimkan oleh \textit{client} ke \textit{server} adalah sebagai berikut :
+  
+  \begin{lstlisting}
+/bayar/{nop}/{thn}/{tglBayar}/{jamBayar}
+  \end{lstlisting}
+  
+  Keterangan untuk format \textit{request} di atas adalah sebagai berikut :
+  
+  \begin{itemize}
+    \item Parameter \texttt{\{nop\}}, nantinya diisikan dengan Nomor Objek Pajak yang akan dicatatkan pembayarannya.
+    
+    \item Parameter \texttt{\{thn\}}, nantinya diisikan dengan tahun pajak untuk nomor objek pajak yang akan dicatatkan pembayarannya.
+    
+    \item Parameter \texttt{\{tglBayar\}}, nantinya diisikan dengan tanggal terjadinya transaksi pembayaran.
+    
+    \item Parameter \texttt{\{jamBayar\}}, nantinya diisikan dengan jam terjadinya transaksi pembayaran.
+  \end{itemize}
+  
+  Dari \textit{request} pencatatan transaksi pembayaran yang terjadi seperti di atas, hasil respon yang dikirimkan \textit{server} ke \textit{client} akan terbagai menjadi beberapa skenario berikut :
+  
+  \begin{itemize}
+    \item Skenario Pencatatan Transaksi Pembayaran Yang Sukses.
+    \item Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Tanggal dan Jam Pembayaran Telah Melewati Tanggal dan Jam Pencatatan.
+    \item Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Tagihan Telah Terbayar Atau Bernilai Nihil.
+    \item Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Tagihan Telah Dibatalkan.
+    \item Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Terjadi Kesalahan di Sisi Server.
+  \end{itemize}
+  
+  Secara rinci, setiap skenario akan dijelaskan pada bagian-bagian berikut :
+  
+  \subsubsection{Skenario Pencatatan Transaksi Pembayaran Yang Sukses}
+  
+  Saat \textit{client} mengirimkan \textit{request} pencatatan transaksi pembayaran yang benar dengan data tagihan pada sistem basis data ada dan belum terbayar, maka \textit{server} akan menghasilkan respon sebagai berikut :
+  
+  \begin{lstlisting}
+{
+  "code":01,
+  "message":"Pembayaran Telah Tercatat",
+  "byrSppt":{
+    "nop":{nop},
+    "thn":{thn},
+    "ntpd":{ntpd},
+    "mataAnggaranPokok":{mataAnggaranPokok},
+    "pokok":{pokok},
+    "mataAnggaranSanksi":{mataAnggaranSanksi},
+    "sanksi":{sanksi},
+    "namaWp":{namaWp},
+    "alamatOp":{alamatOp}
+  }
+}
+  \end{lstlisting}
+  
+  Penjelasan dari kode respon \textit{respon} di atas adalah sebagai berikut :
+  
+  \begin{itemize}
+    \item Parameter \texttt{\"code\"} akan berisi kode status respon dari \textit{server}, dalam kondisi skenario ini akan bernilai \texttt{01}.
+    
+    \item Parameter \texttt{\"message\"} akan berisi penjelasan dari kode status pada parameter \texttt{\"code\"}. Untuk skenario ini, parameter \texttt{\"message\"} akan berisi \texttt{Pembayaran Telah Tercatat}.
+    
+    \item Parameter \texttt{\"byrSppt\"} yang isinya adalah informasi hasil pencatatan transaksi pembayaran pada basis data.
+    
+    \item Parameter \texttt{\{nop\}}, nantinya akan terisi oleh Nomor Objek Pajak untuk PBB-P2 yang dicatatkan pembayarannya.
+    
+    \item Parameter \texttt{\{thn\}}, nantinya akan terisi oleh tahun pajak untuk nomor pajak PBB-P2 yang dicatatkan pembayarannya.
+    
+    \item Parameter \texttt{\{ntpd\}}, nantinya akan terisi oleh Nomor Transaksi Pajak Daerah yang berupa kode unik untuk tiap transaksi yang terjadi.
+    
+    \item Parameter \texttt{\{mataAnggaranPokok\}}, nantinya akan terisi informasi kode mata anggaran penerimaan untuk pokok pajak PBB-P2.
+    
+    \item Parameter \texttt{\{pokok\}}, nantinya akan terisi besarnya pokok pajak PBB-P2 yang terbayar
+    
+    \item Parameter \texttt{\{mataAnggaranSanksi\}}, nantinya akan terisi informasi kode mata anggaran penerimaan untuk sanksi administratif berupa denda pajak.
+    
+    \item Parameter \texttt{\{sanksi\}}, nantinya akan terisi besarnya sanksi administratif, atau dendan pajak yang terbayar untuk PBB-P2.
+    
+    \item Parameter \texttt{\{namaWp\}}, nantinya akan terisi dengan nama wajib pajak untuk nomor objek pajak pada tahun pajak yang di \textit{request} oleh \textit{client}.
+    
+    \item Parameter \texttt{\{alamatOp\}}, nantinya akan terisi dengan alamat objek pajak.
+  \end{itemize}
+  
+  \subsubsection{Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Tanggal dan Jam Pembayaran Telah Melewati Tanggal dan Jam Pencatatan}
+  
+  Pada saat \textit{client} mengirimkan \textit{request} pencatatan transaksi pembayaran, maka \textit{client} akan mengirimkan informasi tanggal dan jam terjadinya transaksi pembayaran, namun apabila tanggal dan jam terjadinya pembayaran telah melewati tanggal dan jam pencatatan, maka kondisinya akan gagal dicatatkan dan \textit{server} akan mengirimkan respon berikut :
+  
+  \begin{lstlisting}
+{
+  "code":32,
+  "message":"Tanggal atau jam pada saat dibayarkan melebihi tanggal dan jam saat ini",
+  "byrSppt":null
+}
+  \end{lstlisting}
+  
+  Penjelasan untuk kode di atas adalah sebagai berikut :
+  
+  \begin{itemize}
+    \item Parameter \texttt{\"code\"}, berisi kode status pencatatan pembayaran yang terjadi di \textit{server}, pada skenario ini akan berisi \texttt{32}.
+    \item Parameter \texttt{\"message\"}, berisi pesan yang menjelaskan kode status yang berada pada parameter \texttt{\"code\"} di atas, pada skenario ini akan berisi pesan \texttt{Tanggal atau jam pada saat dibayarkan melebihi tanggal dan jam saat ini}.
+    \item Parameter \texttt{\"byrSppt\"}, karena proses pencatatan transaksi pembayaran pada skenario ini tidak berhasil, maka isi dari parameter ini adalah \texttt{null}.
+  \end{itemize}
+  
+  \subsubsection{Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Tagihan Telah Terbayar Atau Bernilai Nihil}
+  \subsubsection{Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Tagihan Telah Dibatalkan}
+  \subsubsection{Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Terjadi Kesalahan di Sisi Server}  
 
 \subsection{\textit{Reversal} Pembayaran}
 
