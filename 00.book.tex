@@ -344,7 +344,45 @@ Secara rinci akan dijelaskan sebagai berikut :
   \end{itemize}
   
   \subsubsection{Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Tagihan Telah Terbayar Atau Bernilai Nihil}
+  
+  Pada saat \textit{client} melakukan \textit{request} pencatatan transaksi pembayaran ke \textit{server}, ternyata parameter tanggal dan jam pembayaran telah melewati tanggal dan jam pencatatan (hari dan jam saat terjadinya \textit{request} ini), maka \textit{server} akan mengirimkan pesan respon sebagai berikut :
+  
+  \begin{lstlisting}
+{
+  "code":32,
+  "message":"Tanggal atau jam pada saat dibayarkan melebihi tanggal dan jam saat ini",
+  "byrSppt":null
+}
+  \end{lstlisting}
+  
+  Penjelasan untuk pesan respon di atas adalah sebagai berikut :
+  
+  \begin{itemize}
+    \item Parameter \texttt{\"code\"} adalah kode status respon yang dikirimkan oleh \textit{server} untuk menggambarkan hasil proses dari \textit{request} yang telah dikirimkan oleh \textit{client}.
+    \item Parameter \texttt{\"message\"} adalah pesan penjelas yang mendeskripsikan kode yang ada pada parameter \texttt{\"code\"}. Pada skenario ini, akan muncul pesan berikut : \texttt{Tanggal atau jam pada saat dibayarkan melebihi tanggal dan jam saat ini}.
+    \item Parameter \texttt{\"byrSppt\"} akan bernilai \texttt{null} karena memang \textit{request} tidak berhasil diselesaikan oleh \textit{server} karena ada kesalahan isian parameter.
+  \end{itemize}
+  
   \subsubsection{Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Tagihan Telah Dibatalkan}
+  
+  Pada skenario ini, \textit{client} mengirimkan \textit{request} pencatatan transaksi pembayaran ke \textit{server}, yang ternyata tagihan untuk nomor objek pajak dan tahun pajak yang diminta sudah dibatalkan, sehingga tidak ada tagihan pajak terhutang. \textit{Server} kemudian akan mengirimkan respon sebagai berikut :
+  
+  \begin{lstlisting}
+{
+  "code":03,
+  "message":"Tagihan SPPT Telah Dibatalkan",
+  "byrSppt":null
+}
+  \end{lstlisting}
+  
+  Penjelasan untuk kode respon di atas adalah sebagai berikut :
+  
+  \begin{itemize}[H]
+    \item Parameter \texttt{\"code\"} berisi kode status respon \textit{server} terhadap \textit{request} dari \textit{client}.
+    \item Parameter \texttt{\"message\"} berisi penjelasan atas kode status yang tertera pada parameter \texttt{\"code\"}.
+    \item Parameter \texttt{\"byrSppt\"} berisi \texttt{null} karena memang proses pencatatan transaksi pembayaran gagal sehingga tidak ada informasi mengenai objek pajak yang dikirimkan ke \textit{client}.
+  \end{itemize}
+  
   \subsubsection{Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Terjadi Kesalahan di Sisi Server}  
 
 \subsection{\textit{Reversal} Pembayaran}
