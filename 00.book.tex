@@ -384,8 +384,49 @@ Secara rinci akan dijelaskan sebagai berikut :
   \end{itemize}
   
   \subsubsection{Skenario Pencatatan Transaksi Pembayaran Yang Gagal Karena Terjadi Kesalahan di Sisi Server}  
+  
+  Pada saat \textit{client} mengirimkan \textit{request} pencatatan transaksi pembayaran, format dan isi dari tiap parameter masukkan sudah benar, hanya saja pada saat \textit{server} aplikasi akan mengambil data pada \textit{server} basis data mengalami kegagalan. Berikut respon yang dikirimkan oleh \textit{server} sebagai jawaban atau respon dari \textit{request client} :
+  
+  \begin{lstlisting}
+{
+  "code":04,
+  "message":"Kesalahan Server",
+  "byrSppt":null
+}
+  \end{lstlisting}
 
+  Penjelasan untuk isi kode di atas adalah sebagai berikut :
+  
+  \begin{itemize}
+    \item Parameter \texttt{\"code\"} berisi kode status respon \textit{server} terhadap \textit{request} dari \textit{client}. Pada skenario ini berisi \texttt{04}.
+    \item Parameter \texttt{\"message\"} berisi penjelasan dari kode status respon yang berada pada parameter \texttt{\"code\"}, pada skenario ini berisi \texttt{\"Kesalahan Server\"}, karena memang \textit{server} gagal memproses data yang dikirimkan oleh \textit{client}.
+    \item Parameter \texttt{\"byrSppt\"} berisi \texttt{null} karena memang proses pencatatan transaksi pembayaran gagal di proses.
+  \end{itemize}
+  
 \subsection{\textit{Reversal} Pembayaran}
+
+  \textit{Reversal} Pembayaran dilakukan apabila ada kesalahan pencatatan pembayaran yang sebelumnya terjadi. Untuk melakukan \textit{request reversal} pembayaran ini, format yang dikirimkan adalah sebagai berikut :
+
+  \begin{lstlisting}
+/reversal/{nop}/{thn}/{ntpd}
+  \end{lstlisting}
+  
+  Penjelasan untuk format \textit{request} di atas adalah sebagai berikut :
+  
+  \begin{itemize}
+    \item Parameter \texttt{\{nop\}} digantikan dengan nomor objek pajak yang pencatatan pembayarannya akan dilakukan \textit{reversal}.
+    \item Parameter \texttt{\{thn\}} digantikan dengan tahun pajak untuk nomor objek pajak yang pencatatan pembayarannya akan dilakukan \textit{reversal}.
+    \item Parameter \texttt{\{ntpd\}} digantikan dengan nomor transaksi pajak daerah yang didapatkan pada saat melakukan \textit{request} pencatatan transaksi pembayaran.
+  \end{itemize}
+  
+  Respon dari \textit{server} untuk \textit{request} di atas akan terbagi menjadi beberapa skenario sebagai berikut :
+  
+  \begin{itemize}
+    \item Skenario \textit{Reversal} Pembayaran Yang Sukses
+    \item Skenario \textit{Reversal} Pembayaran Yang Gagal Karena Data Yang Diminta Tidak Ada.
+    \item Skenario \textit{Reversal} Pembayaran Yang Gagal Karena Ada Data Pembayaran Yang Tercatat Ganda.
+    \item Skenario \textit{Reversal} Pembayaran Yang Gagal Karena Kesalahan Server
+  \end{itemize}
 
 \section{REFERENSI KODE}
 
