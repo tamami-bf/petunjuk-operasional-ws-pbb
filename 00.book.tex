@@ -425,9 +425,115 @@ Secara rinci akan dijelaskan sebagai berikut :
     \item Skenario \textit{Reversal} Pembayaran Yang Sukses
     \item Skenario \textit{Reversal} Pembayaran Yang Gagal Karena Data Yang Diminta Tidak Ada.
     \item Skenario \textit{Reversal} Pembayaran Yang Gagal Karena Ada Data Pembayaran Yang Tercatat Ganda.
-    \item Skenario \textit{Reversal} Pembayaran Yang Gagal Karena Kesalahan Server
+    \item Skenario \textit{Reversal} Pembayaran Yang Gagal Karena Kesalahan \textit{Server}
+  \end{itemize}
+  
+  Secara rinci, tiap skenario di atas akan dijelaskan pada bagian-bagian berikut :
+  
+  \subsubsection{Skenario \textit{Reversal} Pembayaran Yang Sukses}
+  
+  Pada skenario ini, \textit{client} mengirimkan \textit{request} atau permintaan \textit{reversal} pembayaran karena terjadi kesalahan pencatatan pembayaran sebelumnya. \textit{Request} yang dikirimkan \textit{client} ke \textit{server} adalah seperti dijelaskan diatas, kemudian \textit{server} memberikan respon yang menyatakan bahwa proses \textit{reversal} telah selesai dilaksanakan dan berhasil, berikut kode respon yang dikirim oleh \textit{server} ke \textit{client} :
+  
+  \begin{lstlisting}
+{
+  "code":01,
+  "message":"Proses Reversal Berhasil",
+  "revPembayaran":{
+    "nop":{nop},
+    "thn":{thn},
+    "ntpd":{ntpd}
+  }
+}
+  \end{lstlisting}
+  
+  Penjelasan untuk kode respon di atas adalah sebagai berikut :
+  
+  \begin{itemize}
+    \item Parameter \texttt{code}, berisi kode status respon yang dikirimkan dari \textit{server} ke \textit{client} yang menandakan berhasil atau tidaknya proses \textit{reversal} dilakukan di sisi \textit{server}.
+    \item Parameter \texttt{message}, berisi penjelasan dari kode status respon pada parameter \texttt{code}. Pada skenario ini isinya berupa pesan \texttt{Proses Reversal Berhasil}.
+    \item Parameter \texttt{revPembayaran}, berisi informasi transaksi mana yang berhasil dilakukan \textit{reversal}.
+    \item Parameter \texttt{\{nop\}}, berisi nomor objek pajak yang akan dilakukan \textit{reversal} pembayaran.
+    \item Parameter \texttt{\{thn\}}, berisi tahun pajak untuk nomor objek pajak yang akan dilakukan \textit{reversal} pembayaran.
+    \item Parameter \texttt{\{ntpd\}}, berisi nomor transaksi pajak daerah untuk objek pajak dan tahun pajak yang akan dilakukan \textit{reversal} pembayaran.
+  \end{itemize}
+  
+  \subsubsection{Skenario \textit{Reversal} Pembayaran Yang Gagal Karena Data Yang Diminta Tidak Ada}
+  
+  Pada skenario ini, \textit{client} mengirimkan permintaan \textit{reversal} pembayaran ke \textit{server}, namun setelah \textit{server} aplikasi melakukan pemeriksaan data pada \textit{server} sistem basis data, data yang diminta untuk dilakukan \textit{reversal} pembayaran tidak ada, sehingga \textit{server} akan memberikan respon berikut :
+  
+  \begin{lstlisting}
+{
+  "code":10,
+  "message":"Data Yang Diminta Tidak Ada",
+  "revPembayaran":null
+}
+  \end{lstlisting}
+  
+  Penjelasan untuk kode respon di atas adalah sebagai berikut :
+  
+  \begin{itemize}
+    \item Parameter \texttt{code}, berisi kode status respon yang dikirimkan \textit{server} ke \textit{client} yang menandakan berhasil atau tidaknya proses \textit{reversal} dilakukan di sisi \textit{server}.
+    \item Parameter \texttt{message}, berisi penjelasan atas kode yang muncul pada parameter \texttt{code}, untuk skenario ini berisi pesan \texttt{Data Yang Diminta Tidak Ada}.
+    \item Parameter \texttt{revPembayaran}, berisi informasi objek pajak, tahun pajak, dan nomor transaksi \textit{reversal} pembayaran yang telah dilakukan, karena pada skenario ini proses \textit{reversal} gagal dilakukan, maka bernilai \texttt{null}.
+  \end{itemize}
+  
+  \subsubsection{Skenario \textit{Reversal} Pembayaran Yang Gagal Karena Ada Data Pembayaran Yang Tercatat Ganda}
+  
+  Pada skenario ini, \textit{client} mengirimkan permintaan \textit{reversal} pembayaran ke \textit{server}, namun \textit{server} gagal melakukan proses \textit{reversal} karena pada saat pencatatan transaksi pembayaran terjadi pencatatan ganda dengan nomor objek pajak, tahun pajak, dan nomor transaksi pajak daerah yang sama. \textit{Server} kemudian akan mengirimkan pesan respon sebagai berikut :
+  
+  \begin{lstlisting}
+{
+  "code":04,
+  "message":"Data tersebut Ganda",
+  "revPembayaran":null
+}
+  \end{lstlisting}
+  
+  Penjelasan untuk kode respon di atas adalah sebagai berikut :
+  
+  \begin{itemize}
+    \item Parameter \texttt{code}, berisi kode status respon dari \textit{server} yang menandakan status berhasil atau tidaknya proses \textit{reversal} pembayaran dilakukan.
+    \item Parameter \texttt{message}, berisi pesan penjelas atas kode yang terisi pada parameter \texttt{code}, yang pada skenario ini berisi \texttt{Data tersebut Ganda}.
+    \item Parameter \texttt{revPembayaran}, yang isinya bernilai \texttt{null} karena memang proses \textit{reversal} pembayaran gagal dilakukan.
+  \end{itemize}
+  
+  \subsubsection{Skenario \textit{Reversal} Pembayaran Yang Gagal Karena Kesalahan \textit{Server}}
+  
+  Pada skenario ini, \textit{client} akan mengirimkan permintaan \textit{reversal} pembayaran ke \textit{server}, namun saat \textit{server} aplikasi melakukan komunikasi dengan \textit{server} sistem basis data, terjadi gangguan sehingga proses \textit{reversal} pembayaran tidak dapat dilanjutkan. Pada kondisi ini, \textit{server} akan mengirimkan respon sebagai berikut :
+  
+  \begin{lstlisting}
+{
+  "code":04,
+  "message":"Kesalahan Server",
+  "revPembayaran":null
+}
+  \end{lstlisting}
+  
+  Penjelasan untuk kode respon di atas adalah sebagai berikut :
+  
+  \begin{itemize}
+    \item Parameter \texttt{code}, berisi kode status respon dari \textit{server} yang menandakan status berhasil atau tidaknya proses \textit{reversal} pembayaran dilakukan.
+    \item Parameter \texttt{message}, berisi pesan penjelas atas kode yang terisi pada parameter \texttt{code}, yang pada skenario ini berisi \texttt{Kesalahan Server}.
+    \item Parameter \texttt{revPembayaran}, yang isinya bernilai \texttt{null} karena memang proses \textit{reversal} pembayaran gagal dilakukan.
   \end{itemize}
 
 \section{REFERENSI KODE}
+
+Dari tiap respon yang dikirimkan oleh \textit{server} ke \textit{client} sebagai jawaban atas tiap \textit{request}, maka \textit{server} akan mengirimkan kode pada parameter \texttt{code}. Isi dari parameter \texttt{code} ini dapat dilihat pada daftar berikut beserta penjelasannya :
+
+\begin{itemize}
+  \item \texttt{01}, artinya permintaan proses yang dikirimkan oleh \textit{client} ke \textit{server} berhasil dilakukan dengan sempurna.
+  \item \texttt{10}, artinya data nomor objek pajak untuk tahun pajak yang diinginkan oleh \textit{client} tidak ada pada sistem basis data.
+  \item \texttt{13}, artinya nomor objek pajak untuk tahun pajak yang diminta oleh \textit{client} sudah pernah dilakukan pembayaran sebelumnya.
+  \item \texttt{03}, artinya nomor objek pajak untuk tahun pajak yang diminta oleh \textit{client} bernilai nihil, tidak ada nilai pajak terhutang.
+  \item \texttt{04}, artinya \textit{server} aplikasi tidak dapat berkomunikasi dengan \textit{server} sistem basis data.
+  \item \texttt{05}, artinya \textit{server} tidak berhasil melakukan pembentukan nomor transaksi pajak daerah.
+  \item \texttt{31}, artinya parameter jumlah pembayaran yang dikirimkan oleh \textit{client} mengandung karakter bukang angka.
+  \item \texttt{32}, artinya parameter tanggal dan jam pembayaran telah melewati tanggal dan jam pencatatan
+  \item \texttt{33}, artinya parameter tanggal dan jam terjadinya permintaan \textit{reversal} sudah melebihi 24 (dua puluh empat) jam.
+  \item \texttt{34}, artinya kode \textit{request} yang dikirimkan oleh \textit{client} tidak benar dan tidak dapat diproses.
+  \item \texttt{35}, artinya masa pajak yang dikirimkan oleh \textit{client} sebagai sebuah \textit{request} memiliki karaketer bukan angka.
+  \item \texttt{36}, artinya parameter tahun pajak yang dikirim oleh \textit{client} mengandung karakter bukang angka.
+\end{itemize}
 
 \end{document}
